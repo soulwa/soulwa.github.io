@@ -1,0 +1,32 @@
+#navbar {
+    position: fixed;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 10rem;
+    color: #fbf1c7;
+}
+
+nav li {
+    list-style: none;
+    line-height: 2em;
+}
+
+nav a {
+    text-decoration: none;
+    color: #ebdbb2;
+}
+
+nav a:hover, a:visited:hover {
+    color: #d3869b;
+    text-decoration: underline;
+}
+
+nav a:visited {
+    color: #549699;
+}
+
+nav a:active {
+    color: #b16286;
+}
