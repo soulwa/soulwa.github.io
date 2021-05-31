@@ -7,4 +7,17 @@
 <p>
     I'm currently a student at Northeastern University, studying Computer Science and Mathematics.
 </p>
+
+{% set posts = get_section(path='blog/_index.md') %}
+{% for page in posts.pages | reverse %}
+<article class="post-preview">
+    <header>
+        <h3 class="post-title">
+            <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
+        </h3>
+    </header>
+    {{ page.summary | safe }}
+</article>
+{% endfor %}
+
 {% endblock content %}

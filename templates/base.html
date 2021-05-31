@@ -4,7 +4,11 @@
 <head>
 	<meta charset="utf-8">
 	<title>soulware.us</title>
-	<link rel="stylesheet" type="text/css" href="{{ get_url(path='style.css') }}">
+    <link rel="stylesheet"  href="{{ get_url(path='style.css') }}">
+
+    {% set theme = "color/" ~ config.extra.color_theme ~ ".css" %}
+    <link rel="stylesheet" href="{{ get_url(path=theme) }}">
+
 </head>
 
 <body>

@@ -1,6 +1,11 @@
 +++
-title = "My first post"
-date = "2021-03-31"
+title = "hello world!"
+date = "2021-04-01"
+
 +++
 
-This is my first blog post.
+first blog post to get this site started.
+
+<!-- more -->
+
+I set this site up with [zola](https://www.getzola.org/), which is a pretty nice static site generator. 

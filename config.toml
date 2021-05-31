@@ -17,9 +17,10 @@ highlight_code = true
 links = [
     { url = "/", text = "home" },
     { url = "/about", text = "about me" },
-    { url = "/projects", text = "projects" },
-    { url = "/resume.pdf", text = "resume" },
+    { url = "/resume", text = "resume" },
     { url = "mailto:sam.c.lyon@gmail.com", text = "email" },
     { url = "https://github.com/soulwa", text = "github" },
     { url = "https://soulware.itch.io", text = "itch.io" },
 ]
+
+color_theme = 'dark'
