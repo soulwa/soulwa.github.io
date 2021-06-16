@@ -1,6 +1,5 @@
 +++
 title="Resume"
-date="2021-05-31"
 page_template="blog.html"
 +++
 <!-- The (first) h1 will be used as the <title> of the HTML page -->
@@ -11,7 +10,7 @@ line. It is intended to be used for contact details -->
 - <sam.c.lyon@gmail.com>
 - (617) 949-6113
 - <https://github.com/soulwa>
-- [soulware.us](soulware.us)
+- [soulware.us](https://soulware.us)
 - Boston, MA
 - Northeastern University
 
@@ -42,6 +41,17 @@ Student at Northeastern University studying Computer Science and Mathematics. Pr
   - Frameworks: Flask, actix-web, discord.py
   - Technologies: Unity, Git, Github, PostgreSQL, Redis, SQLite3
 
+## Experience
+
+### <span>Cofounder, [SEngine](https://sengineorg.github.io)</span> <span>April 2021 -- present</span>
+  - finalist for Northeastern's Entrepreneurship Club
+  - building service allowing users to develop custom WASM binaries, deliver binaries to end users
+  - integrating React.js frontend with a Node + Rust backend and WebAssembly
+
+### <span>Teacher/Coach, Mystic Swimming</span> <span>September 2017 -- Mar 2020</span>
+  - directed 3 groups of children aged 4-10 in swim lessons weekly
+  - served as a mentor and oversaw classes for newer volunteers
+
 ## Projects
 
 ### <span>Handins CLI</span> <span>Mar 2021 - Present</span>
@@ -71,17 +81,6 @@ A challenging 2D platformer with 40+ levels of original gameplay
   - [tutoring forum](https://github.com/soulwa/hacknow-tutor) for CalHacks 2020, 
   - [binary multiplication implementation](https://github.com/soulwa/mulc) for Replit Challenge #1 (placed first), 
   - [top down shooter](https://replit.com/@qsa/munngun) for the Replit Game Jam
-
-## Experience
-
-### <span>Cofounder, [SEngine](https://sengineorg.github.io)</span> <span>April 2021 -- present</span>
-  - finalist for Northeastern's Entrepreneurship Club
-  - building service allowing users to develop custom WASM binaries, deliver binaries to end users
-  - integrating React.js frontend with a Node + Rust backend and WebAssembly
-
-### <span>Teacher/Coach, Mystic Swimming</span> <span>September 2017 -- Mar 2020</span>
-  - directed 3 groups of children aged 4-10 in swim lessons weekly
-  - served as a mentor and oversaw classes for newer volunteers
 
 ## Interests
 free and open source software, game development, speedrunning, music production, reverse engineering/decompilation, swimming
