@@ -13,7 +13,7 @@ i also like listening to music a lot. my last.fm is [here](https://www.last.fm/u
 
 wow! here's an image of albums made in the 2020s that i really like:
 
-{{ resize_image(path="/images/topsters2020-2022.png", width=800, height=0, op="fit_width") }}
+{{ resize_image(path="static/images/topsters2020-2022.png", width=800, height=0, op="fit_width") }}
 
 here's some websites where i consume media! i use [backloggd](https://www.backloggd.com/u/soulware/) to journal games i play. that site is mainly ripped from [letterboxd](https://letterboxd.com/soulware/) which is what i use to track movies and (some) tv shows.
 
