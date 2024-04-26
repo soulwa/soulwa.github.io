@@ -1,0 +1,256 @@
+<!doctype html>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://soulware.us/souleng.css" />
+</head>
+
+<body>
+  <h1>Souleng</h1>
+  <div class="links-container">
+    <a href="https://github.com/Spring24BuildingGameEngines/monorepo-soulwa/tree/main/finalproject"
+      >github</a
+    >
+    &nbsp;
+    <a href="https://soulware.us/souleng-doxygen">doxygen</a>
+    &nbsp;
+    <a href="https://soulware.us/images/souleng.png">architecture</a>
+  </div>
+  <br />
+  <br />
+  <video width="640" height="360" controls>
+    <source src="https://soulware.us/videos/finalvid.mp4" type="video/mp4" />
+  </video>
+  <p>
+    <strong>Souleng</strong> is a component-based game engine which allows for the creation of games
+    entirely in Python, utilizing the modern <code>pybind11</code> fork
+    <a href="https://github.com/google/pybind11k"
+      ><strong><code>pybind11k</code></strong></a
+    >
+    to allow users to derive their own custom Components in Python and effortlessly interface with
+    the C++ side of things.
+  </p>
+  <div class="img-container">
+    
+    <img src="https:&#x2F;&#x2F;soulware.us&#x2F;processed_images&#x2F;ss1.6293e3bf5ed1ed6b.png" />
+    
+    <img src="https:&#x2F;&#x2F;soulware.us&#x2F;processed_images&#x2F;ss2.e15c7e64d75dfe0f.png" />
+    
+    <img src="https:&#x2F;&#x2F;soulware.us&#x2F;processed_images&#x2F;ss3.363f9777023a044f.png" />
+  </div>
+
+  <h2>Running the engine</h2>
+
+  <p>
+    You can build the engine on Linux with <code>build.sh</code>, provided in the
+    <code>engine</code> directory.
+  </p>
+  <p>
+    You can run the engine with <code>run.sh</code>, which will automatically set the
+    <code>LD_LIBRARY_PATH</code> to be the <code>lib/</code> directory. You can also set this
+    variable yourself and run the binary directly. The expected format is
+  </p>
+
+  <pre>
+    <code>$ ./run.sh &lt;scene&gt;</code>
+  </pre>
+
+  where the <i>scene</i> is either
+  <ul>
+    <li>
+      a path to a Python file without the .py extension, ie. running
+      <code>$ ./run.sh games/mario</code> would load and run the scene in the file
+      <code>games/mario.py</code>
+    </li>
+    <li>
+      a path to a file with the <code>.scenes</code> extension. This file should contain the
+      relative path from itself to any number of Python files, specified as in the above bullet
+      points. For example, the file <code>mario.scenes</code> with content
+      <pre>
+        <code>
+          ui/mario_menu
+          mario
+          ui/game_over
+        </code>
+      </pre>
+      would load the scenes in <code>ui/mario_menu.py</code>, <code>mario</code>, and
+      <code>ui/game_over</code>, and would start running the scene in <code>ui/mario_menu.py</code>
+    </li>
+  </ul>
+
+  <h2>Python scripting</h2>
+
+  <p>
+    To create a scene in Python, at minimum the following functions must be present in the script:
+  </p>
+  <ul>
+    <li><code>scene_startup</code></li>
+    <li><code>scene_shutdown</code></li>
+    <li><code>scene_input</code></li>
+    <li><code>scene_update</code></li>
+    <li><code>scene_render</code></li>
+  </ul>
+
+  <p>Custom components can be created as follows:</p>
+
+  <pre><code>
+    import souleng as sw
+    class Foo(sw.ScriptComponent):
+      def __init__():
+        super().__init__()
+        ...
+
+      def input():
+        ... # handle input here
+
+      def update(dt: float):
+        ...
+
+      def render():
+        ...
+  </code></pre>
+
+  <p>
+    Custom functions can be written as well, but these functions must be overridden for the
+    component to run code every frame, as the C++ engine will only call these functions.
+  </p>
+
+  <p>
+    Three additional submodules exist, to allow the user to interface with different systems in the
+    game engine:
+  </p>
+
+  <ul>
+    <li>
+      <code>input</code> - allows the user to query the input manager for keys pressed and mouse
+      clicks
+      <ul>
+        <li>
+          <code>get_key(key: str)</code> - returns an object for the <code>key</code> showing if
+          it's been <code>pressed</code>, <code>held</code>, or <code>released</code> this frame
+        </li>
+        <li>
+          <code>get_mouse_click()</code> - returns an object with mouse click data from the current
+          frame
+          <ul>
+            <li>
+              <strong><code>pressed</code></strong> - <code>True</code> if the mouse button was
+              first pressed this frame
+            </li>
+            <li>
+              <strong><code>held</code></strong> - <code>True</code> if the mouse button was held
+              down this frame
+            </li>
+            <li>
+              <strong><code>released</code></strong> - <code>True</code> if the mouse button was
+              released this frame
+            </li>
+            <li>
+              <strong><code>clicks</code></strong> - number of times the mouse was clicked this
+              frame
+            </li>
+            <li>
+              <strong><code>pos</code></strong> - vector with x and y for the current mouse position
+            </li>
+            <li>
+              <strong><code>button</code></strong> - the mouse button pressed this frame
+            </li>
+          </ul>
+        </li>
+        <li>
+          <code>get_mouse_motion()</code> - returns an object with mouse motion data from the
+          current frame
+          <ul>
+            <li>
+              <strong><code>motion</code></strong> - vector with x and y for the amount the mouse
+              moved in each direction since the last time it was polled
+            </li>
+            <li>
+              <strong><code>pos</code></strong> - vector with x and y for the current mouse position
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <code>render</code> - allows the user to call rendering methods necessary to run a scene,
+      interfacing with SDL
+      <ul>
+        <li>
+          <code>set_render_draw_color(r: int, g: int, b: int, a: int)</code> - sets the background
+          color. equivalent to <code>SDL_SetRenderDrawColor</code>
+        </li>
+        <li>
+          <code>render_clear()</code> - clears the rendering target. equivalent to
+          <code>SDL_RenderClear</code>
+        </li>
+        <li>
+          <code>render_present()</code> - presents rendered data to the screen. equivalent to
+          <code>SDL_RenderPresent</code>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <code>director</code> - allows the user to change scenes
+      <ul>
+        <li>
+          <code>change_scene(name: str)</code> - changes the current scene to the one specified by
+          name
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <p>
+    The full list of available Python methods can be found in <code>engine/src/bindings.cpp</code>.
+  </p>
+
+  <h2>Process and Postmortem</h2>
+
+  <p>
+    My main inspiration for making Souleng was the video for the Eternal engine, linked as a good
+    sample game engine in the final project repository. In their video demonstration, they showed
+    games using Python components such that most of the game could just be scripted in Python.
+    However, these components were a bit ad-hoc: they required the module and class name of the
+    Python module to link properly. I wanted to improve on this idea, to create a seamless
+    integration between the scripting side of the game engine and the actual components.
+  </p>
+
+  <p>
+    In order to do this, I looked more closely at how Pybind worked, and tried to understand exactly
+    why it was not possible to inherit from components in Python, and then use them in C++. I ran
+    into the issue of this not being possible when adapting Space Invaders for this new engine, but
+    researching it shows that this would only happen if Python no longer held any references to the
+    object being passed to C++. It would "slice" components, so that any Python specific logic was
+    lost. A more modern fork of <code>pybind11</code> addressed this issue, so I opted to use that
+    library and included it in my game engine.
+  </p>
+
+  <p>
+    Ultimately, my game engine accomplished what it set out to do, and I'm happy with that component
+    of it. The game development process in Python has as much power as it did in C++, but all of the
+    parts of the engine which require high performance can still run in C++, including the game loop
+    itself. This engine also adds some smaller features onto the previous iteration, including
+    support for spritesheets (swapping textures), loading multiple scenes, and much more
+    comprehensive input handling (handling all keys, and mouse clicks/motion).
+  </p>
+
+  <p>
+    There was still a lot I wish I could've accomplished for this project, as much of it was spent
+    understanding the internals of pybind rather than focusing on more user-friendly features.
+    Scenes in the game engine can be layed out in <code>scene_startup</code> in Python, but there is
+    no GUI editor to accomplish this. Additionally, I would've liked to had this GUI editor parse
+    the AST for any Python scenes, to detect any custom components and allow users to add them
+    through the editor, as with a game engine like Unity. I would also add some more builtin
+    components, for things like sound and animation- sound would be something that C++ is needed
+    for, but even something like animation could be implemented from Python, which would be a good
+    showcase of the potential of this scripting feature. I would give more thought to the memory
+    model used for the game engine, possibly using a memory arena to manage lifetimes rather than
+    shared pointers, to allow for more granular control over the lifetimes of game objects. Finally,
+    I would like to evaluate the way I was using singleton data structures- they felt necessary at
+    times, but there might've been room for some other construct (maybe even just static classes,
+    since they need to live for the lifetime of the program).
+  </p>
+
+  <script src="https://soulware.us/scripts/souleng.js"></script>
+</body>
