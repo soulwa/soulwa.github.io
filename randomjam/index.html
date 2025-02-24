@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>slot machine with filters</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #sidebar {
+      width: 250px;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      order: 2;
+    }
+    .arrow {
+      font-family: sans-serif;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    .arrow.collapsed::after {
+      content: "⮞"; 
+    }
+    .arrow.expanded::after {
+      content: "⮟";
+    }
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .filter-group {
+      margin-bottom: 10px;
+    }
+    .filter-group > .header {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .filter-group > .header > span.arrow {
+      display: inline-block;
+      width: 15px;
+      transition: transform 0.2s;
+    }
+    .filter-group > .children {
+      margin-left: 20px;
+      display: none;
+    }
+    .filter-group.expanded > .children {
+      display: block;
+    }
+    /* slot machine styles */
+    #slot-container {
+      width: 100%;
+      height: 60px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    #roller {
+      position: relative;
+    }
+    .item {
+      height: 60px;
+      line-height: 60px;
+      font-size: 1.8em;
+      text-align: center;
+    }
+    .selected {
+      animation: enlarge 0.5s ease-out forwards;
+    }
+    @keyframes enlarge {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.5); }
+      100% { transform: scale(1); }
+    }
+    #metadata {
+      margin: 10px;
+      font-size: 1.2em;
+    }
+    #spin {
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <h2>filters</h2>
+    <div id="filters"></div>
+  </div>
+  <div id="main">
+    <div id="slot-container">
+      <div id="roller"></div>
+    </div>
+    <div id="metadata"></div>
+    <button id="spin">spin</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script type="module">
+    // sample data; tags represent a path from specific (first) to general (last)
+    const res = await fetch('themes.json');
+    const data = await res.json();
+    // slot machine setup
+    const container = document.getElementById('slot-container');
+    const roller = document.getElementById('roller');
+    const metadata = document.getElementById('metadata');
+    const spinBtn = document.getElementById('spin');
+    const ITEM_HEIGHT = 60;
+    let items = [];
+
+        // build a hierarchical filter tree from reversed tag chains
+    // each item's chain: reverse(tags) so that top-level = last element
+    let filterTree = {};
+
+    function addToTree(chain) {
+      let node = filterTree;
+      chain.forEach(tag => {
+        if (!node[tag]) {
+          node[tag] = { checked: true, children: {} };
+        }
+        node = node[tag].children;
+      });
+    }
+
+    data.forEach(item => {
+      if (item.tags && item.tags.length) {
+        let chain = item.tags.slice().reverse(); // top-level is last tag
+        addToTree(chain);
+      }
+    });
+
+    // recursively render the filter tree
+    const filtersDiv = document.getElementById('filters');
+
+    function propagateCheckboxState(node, state) {
+      Object.keys(node).forEach(tag => {
+        node[tag].checked = state;
+        propagateCheckboxState(node[tag].children, state);
+      });
+    }
+
+    // TODO (sam): this data model sucks, we need something better.
+    function propagateCheckboxDOM(container, state) {
+      const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = state);
+    }
+
+
+    function renderTree(node) {
+      const container = document.createElement('div');
+      container.classList.add('filter-tree');
+      Object.keys(node).forEach(tag => {
+        const nodeDiv = document.createElement('div');
+        nodeDiv.className = 'filter-node';
+        
+        // header with arrow, checkbox, and label
+        const header = document.createElement('div');
+        header.className = 'filter-header';
+        
+        const hasChildren = Object.keys(node[tag].children).length > 0;
+        const arrow = document.createElement('span');
+        arrow.className = 'arrow';
+        if(hasChildren) arrow.classList.add('collapsed'); // default collapsed state
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = node[tag].checked;
+        checkbox.style.marginRight = '5px';
+        
+        const label = document.createElement('span');
+        label.className = 'filter-label';
+        label.innerText = tag;
+        
+        header.appendChild(arrow);
+        header.appendChild(checkbox);
+        header.appendChild(label);
+        nodeDiv.appendChild(header);
+        
+        if (hasChildren) {
+          const childrenContainer = document.createElement('div');
+          childrenContainer.className = 'children';
+          childrenContainer.style.display = 'none';
+          childrenContainer.style.marginLeft = '20px';  // <--- indentation for subcategories
+          childrenContainer.appendChild(renderTree(node[tag].children));
+          nodeDiv.appendChild(childrenContainer);
+          
+          // toggle display on arrow click
+          arrow.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (childrenContainer.style.display === 'none') {
+              childrenContainer.style.display = 'block';
+              arrow.classList.remove('collapsed');
+              arrow.classList.add('expanded');
+            } else {
+              childrenContainer.style.display = 'none';
+              arrow.classList.remove('expanded');
+              arrow.classList.add('collapsed');
+            }
+          });
+        }
+        
+        // toggle checkbox when header (except arrow) is clicked
+        // header.addEventListener('click', (e) => {
+        //   if (e.target === arrow) return;
+        //   checkbox.checked = !checkbox.checked;
+        //   node[tag].checked = checkbox.checked;
+        //   updateFilteredData();
+        // });
+        
+        // update tree when checkbox changes directly
+        checkbox.addEventListener('change', () => {
+          node[tag].checked = checkbox.checked;
+          propagateCheckboxState(node[tag].children, checkbox.checked);
+          updateFilteredData();
+        });
+        
+        container.appendChild(nodeDiv);
+      });
+      return container;
+    }    
+
+    function renderFilters() {
+      filtersDiv.innerHTML = '';
+      filtersDiv.appendChild(renderTree(filterTree));
+    }
+    renderFilters();
+
+    // filtering: an item passes if for its reversed tag chain, every corresponding node is checked.
+    let filteredData = [];
+    function passesFilter(item) {
+      if (!item.tags || !item.tags.length) return true;
+      let chain = item.tags.slice().reverse();
+      let node = filterTree;
+      for (let tag of chain) {
+        if (!node[tag] || !node[tag].checked) return false;
+        node = node[tag].children;
+      }
+      return true;
+    }
+
+    function updateFilteredData() {
+      // TODO (sam): this should update for the next roll, but not the current one if we're spinning.
+      filteredData = data.filter(passesFilter);
+      prepareRoller();
+    }
+
+    updateFilteredData();
+
+    function prepareRoller() {
+      roller.innerHTML = '';
+      items = [];
+      const source = filteredData.length ? filteredData : [{ name: "no items", tags: ["none"] }];
+      // repeat the list for smooth animation
+      for (let i = 0; i < 20; i++) {
+        source.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'item';
+          div.innerText = item.name;
+          roller.appendChild(div);
+          items.push(item);
+        });
+      }
+    }
+    prepareRoller();
+
+    let animationFrame;
+    let position = 0;
+    let velocity = 40; // pixels per frame
+    let deceleration = 0.3;
+    let spinning = false;
+    let finalIndex;
+
+    let targetPosition;
+    let totalTime;
+    let v_initial;
+    let startTime;
+    let startPosition;
+
+    // new time-based spin version; replace the old startSpin and animate functions
+
+    function startSpin() {
+      if (spinning) return;
+      metadata.innerText = '';
+      Array.from(roller.children).forEach(child => child.classList.remove('selected'));
+
+      // determine target index and compute distance as before
+      const sourceLength = filteredData.length ? filteredData.length : 1;
+      const targetIndex = Math.floor(Math.random() * sourceLength);
+      console.log(`we should pick ${filteredData[targetIndex].name}`)
+      const extraRounds = 3; // extra full rotations
+      const currentIndex = Math.round(position / ITEM_HEIGHT) % sourceLength;
+      const advanceCount = extraRounds * sourceLength + ((targetIndex + sourceLength - currentIndex) % sourceLength);
+      const distance = advanceCount * ITEM_HEIGHT;
+      targetPosition = position + distance;
+      
+      // set the total spin time (ms)
+      totalTime = Math.min(Math.max(filteredData.length * 50, 3000), 10000);
+      // using kinematics: s = v0 * t - 0.5 * a * t^2, and we want v(totalTime)=0 => a = v0 / t.
+      // then s = 0.5 * v0 * t, so v0 = (2 * s) / t.
+      v_initial = (2 * distance) / totalTime;
+      deceleration = v_initial / totalTime;
+      
+      startPosition = position; // record starting position
+      startTime = null;          // reset time counter
+      spinning = true;
+      requestAnimationFrame(animateWithTime);
+    }
+
+    function animateWithTime(timestamp) {
+      if (!spinning) return;
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      
+      if (elapsed >= totalTime) {
+        // ensure we land exactly at targetPosition
+        position = targetPosition;
+        roller.style.transform = `translateY(-${position}px)`;
+        const finalIndex = Math.round(position / ITEM_HEIGHT) % items.length;
+        const selectedDiv = roller.children[finalIndex];
+        selectedDiv.classList.add('selected');
+        const selected = items[finalIndex];
+        metadata.innerText = 'from: '
+        if (selected.indices) {
+          // TODO (sam): custom title here or whatever
+        } else {
+          metadata.innerText += ' ' + selected.tags[0] + ' ' + selected.tags[1];
+        }
+
+        spinning = false;
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        return;
+      }
+      
+      // distance covered = v_initial * elapsed - 0.5 * deceleration * elapsed^2
+      const covered = v_initial * elapsed - 0.5 * deceleration * elapsed * elapsed;
+      position = startPosition + covered;
+      roller.style.transform = `translateY(-${position}px)`;
+      
+      requestAnimationFrame(animateWithTime);
+    }
+
+    spinBtn.addEventListener('click', startSpin);
+  </script>
+</body>
+</html>
+
