@@ -56,6 +56,14 @@ main article:not(:last-of-type) {
   }
 }
 
+ul.spaced li:not(:last-child) {
+  margin-bottom: 10px;
+}
+
+.faded {
+  color: var(--faded-text);
+}
+
 .container {
   display: flex;
   justify-content: space-between

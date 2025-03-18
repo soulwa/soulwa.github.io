@@ -1,1 +1,12 @@
-:root{--background: #282c34;--foreground: #bbc2cf;--border-color: rgba(255, 255, 255, 0.3);--link-color: rgb(81, 175, 239);--link-visited: rgb(105, 158, 160);--link-hover: rgb(211, 134, 155);--link-active: rgb(177, 98, 134);--accent: rgb(142, 192, 124);--accent-visited: #7e9872}
+:root{
+  --background: #282c34;
+  --foreground: #bbc2cf;
+  --border-color: rgba(255, 255, 255, 0.3);
+  --link-color: rgb(81, 175, 239);
+  --link-visited: rgb(105, 158, 160);
+  --link-hover: rgb(211, 134, 155);
+  --link-active: rgb(177, 98, 134);
+  --accent: rgb(142, 192, 124);
+  --accent-visited: #7e9872;
+  --faded-text: rgb(90, 90, 90);
+}
