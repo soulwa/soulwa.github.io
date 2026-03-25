@@ -1,6 +1,18 @@
-body {
-  /* TODO: figure out nice dark colors for this */
+@font-face {
+  font-family: "New Computer Modern Math";
+  src: url("/assets/fonts/NewCMMath-Book.otf") format("opentype");
+  font-display: swap;
 }
+
+body {
+  font-size: 18px;
+}
+
+math {
+  font-family: "New Computer Modern Math", math, serif;
+  font-kerning: normal;
+}
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -9,7 +21,7 @@ input::-webkit-inner-spin-button {
 }
 
 input[type=number] {
-  -moz-appearance: textfield
+  appearance: textfield;
 }
 
 table {
