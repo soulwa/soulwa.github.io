@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="my blog" />
+    <title>soulware.us</title>
+    <link rel="stylesheet" href="/assets/style.css" />
+    <link rel="stylesheet" href="/assets/color/dark.css" />
+  </head>
+
+  <body>
+    <div class="content">
+      <nav id="navbar">
+        <a href="/">home</a>
+        <a href="/blog">blog</a>
+        <a href="/writing">writing</a>
+        <a href="mailto:sam.c.lyon@gmail.com">email</a>
+        <a href="https://bsky.app/profile/soulware.us">bluesky</a>
+        <a href="https://github.com/soulwa">github</a>
+        <a href="https://soulware.itch.io">itch.io</a>
+      </nav>
+      <main>
+        <div class="heading-with-meta">
+          <h1 class="title">
+            semantle vs. saying the same word
+          </h1>
+          <span class="heading-meta faded">? words</span>
+        </div>
+      <p class="subtitle"><strong>DRAFT</strong></p>
+        <p>
+          <a href="https://semantle.com/">Semantle</a> is a word-guessing game. You guess any word and the computer will tell you how close the meaning of your guess is to the meaning of the secret word, similar to how Wordle or Mastermind provide feedback. In Semantle, feedback is a number, representing the closeness of your guess's meaning (a <strong><i>similarity score</i></strong>).
+        </p>
+        <p>
+          Without context, this score is a little vague, so Semantle tries to help you understand this score in a few ways. First, it tells you the scores of the most similar word, tenth-most similar word, and thousandth-most similar word, so you can better understand the distribution of scores. Semantle also provides feedback with a temperature (eg. <i>cold</i> or <i>tepid</i>) if your guess isn't close. Finally, if your guess is within the 1000 most similar words, Semantle will tell you exactly how close your guess is to the secret, out of all the words it knows.
+        </p>
+        <p>
+          Unlike Wordle, Semantle's existence is predicated on recent technological advancements. Similarity scores come from <a href=...>word2vec</a>, which is from 2013. Word2vec refers to a language model which predicts a word given the context in which it appears. To do so, it represents words as vectors known as <strong><i>word embeddings</i></strong>. The word2vec architecture allows for fast training of a language model with a very large vocabulary, and it produces embeddings which map more closely onto human semantic understanding than prior art. We can compute the similarity of two words by taking the cosine similarity of their embeddings (ie. the angle between them in a high-dimensional space).
+
+        <p>
+          Semantle has to leverage these advancements in machine learning to provide its feedback. A smaller vocabulary would mean guesses are rejected more often, which doesn't feel good. Poorer embeddings, either from a small vocabulary or a different model architecture, would make narrowing down the word feel haphazard. Still, it can take a long time to guess the Semantle secret word. Here's my score from today: <br> <br>
+
+          Semantle #1620<br>
+          ✅ 29 Guesses<br>
+          🔝 Guess #27<br>
+          🥈 991/1000<br>
+          💡 0 Hints<br>
+          semantle.com<br>
+        <p>
+          In the past, I've taken well over 100 guesses to guess the secret word. The <strong><i>latent space</i></strong> of word2vec (the vector space in which all the embeddings lie) has some unintuitive corners you can crawl into. The vast size of the vocabulary means that no human will ever develop as thorough a semantic map of English as word2vec, and so there is some ever-present limit to understanding what's going on under the hood.
+        <p>
+          On a recent road trip, I played a word game where the goal is for all players to say the same word. You count down: 3... 2... 1... (Key!/Beach!/House!). You can't repeat words, and you can't say anything between rounds, besides repeating the words that were just said (usually this is done gesturing emphatically or with careful enunciation). We converged somewhat quickly this time, taking about a dozen rounds with 3 players. With 4 players, this game has taken me hours.
+
+        <p>
+          After my latest playthrough of this game, I was struck with the notion that it is like group Semantle. None of the players know the secret word ahead of time, but you are trying to converge on a single word, and you usually do so by leveraging the semantic similarity of the words spoken aloud. You can exhaust the words in a semantic pocket and have to go explore some other direction.
+
+        <p>
+          There are, of course, differences in the two games. On the surface, you are playing in a group, which adds certain dynamics to the play (eg. you may choose to violate or bend rules). There is also less rigidity as you may not all have perfect memories of prior guesses as games drag on, and perhaps players become more inebriated. But there are some deeper differences that get at why Semantle is hard to enjoy.
+
+        <p>
+        - Playing with other people:
+        - Zugzwang - in Semantle guesses have low cost. In sameword it exhausts something so there is a higher cost to getting something wrong.
+          - you have to take an action
+        - you are sort of playing simultaneous games of semantle as well as being a semantle adversary. so, you are giving a guess to other players at the same time as giving them feedback on their previous words & vice versa.
+        - the dual functionality of saying a word, and all the play being concurrent (vs. say -> feedback) is nice.
+        - you can leverage people you're playing with (eg. inside jokes) - these won't be present in word2vec latent space. allows for a clever play there.
+        - chance for you to develop as a player
+
+        ultimate similarities: unstructured play in latent space?
+        not clue-based like many semantic games. eg. cryptic crossword, crosswords, connections...
+        either: reach at a target, or align multiple agents in latent space.
+        - eg. everyone has a starting point, trying to find one another
+        - hidden information game.
+        - sort of strange to think of as a navigation..
+       </main>
+    </div>
+  </body>
+</html>
